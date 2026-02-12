@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CreatePage() {
+  const router = useRouter();
+
   const [question, setQuestion] = useState("¿Quieres ser mi Valentín? 💘");
   const [message, setMessage] = useState("Me gustas mucho 💖");
   const [name, setName] = useState("");
@@ -13,14 +16,11 @@ export default function CreatePage() {
     setLoading(true);
 
     try {
-      // ✅ AQUÍ SE CREA EL FORMDATA (esto faltaba)
       const fd = new FormData();
       fd.append("question", question);
       fd.append("message", message);
       fd.append("name", name);
-      if (file) {
-        fd.append("file", file);
-      }
+      if (file) fd.append("file", file);
 
       const res = await fetch("/api/gifts", {
         method: "POST",
@@ -34,74 +34,68 @@ export default function CreatePage() {
         return;
       }
 
-      alert("Link creado correctamente 💖");
-      console.log(data);
-
+      // 🔥 REDIRECCIÓN A NUEVA PÁGINA
+      router.push(`/created?link=${data.shareUrl}`);
     } catch (error) {
-      alert("Error inesperado");
-      console.error(error);
+      alert("Error creando link");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#e678a8",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        color: "white",
-        fontFamily: "serif",
-      }}
-    >
-      <h1>💌 Crear link</h1>
+    <>
+      {/* VIDEO DE FONDO */}
+      <div className="vbg">
+        <video
+          src="/videos/valentine.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      </div>
+      <div className="vshade" />
 
-      <input
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Pregunta"
-        style={{ margin: 8, padding: 10 }}
-      />
+      <div className="centerStage">
+        <div className="overlayBox">
+          <h1 className="bigTitle">Crear link 💌</h1>
 
-      <textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Mensaje"
-        style={{ margin: 8, padding: 10 }}
-      />
+          <input
+            className="input"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+          />
 
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Tu nombre"
-        style={{ margin: 8, padding: 10 }}
-      />
+          <textarea
+            className="textarea"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
 
-      <input
-        type="file"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-        style={{ margin: 8 }}
-      />
+          <input
+            className="input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Tu nombre"
+          />
 
-      <button
-        onClick={createGift}
-        disabled={loading}
-        style={{
-          marginTop: 15,
-          padding: 10,
-          background: "#ff4f8b",
-          color: "white",
-          border: "none",
-          borderRadius: 8,
-          cursor: "pointer",
-        }}
-      >
-        {loading ? "Creando..." : "Crear link"}
-      </button>
-    </div>
+          <input
+            className="input"
+            type="file"
+            accept="image/*,video/*"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
+
+          <button
+            className="btn btnYes"
+            onClick={createGift}
+            disabled={loading}
+          >
+            {loading ? "Creando..." : "Crear link ✨"}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
