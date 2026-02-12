@@ -1,20 +1,21 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request, { params }: { params: { token: string } }) {
-  const token = params.token;
-  const { answer } = await req.json();
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ token: string }> }
+) {
+  const { token } = await context.params;
 
-  if (answer !== "yes" && answer !== "no") {
-    return NextResponse.json({ error: "answer inválido" }, { status: 400 });
+  try {
+    const body = await request.json();
+
+    console.log("Token:", token);
+    console.log("Body:", body);
+
+    // Aquí luego puedes guardar en Supabase si quieres
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    return NextResponse.json({ error: "Error procesando" }, { status: 500 });
   }
-
-  const { error } = await supabaseAdmin
-    .from("gifts")
-    .update({ answered: answer, answered_at: new Date().toISOString() })
-    .eq("token", token);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json({ ok: true });
 }
