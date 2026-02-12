@@ -6,88 +6,102 @@ export default function CreatePage() {
   const [question, setQuestion] = useState("¿Quieres ser mi Valentín? 💘");
   const [message, setMessage] = useState("Me gustas mucho 💖");
   const [name, setName] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [shareUrl, setShareUrl] = useState("");
 
   async function createGift() {
     setLoading(true);
-    setShareUrl("");
 
     try {
-     const res = await fetch("/api/gifts", {
-  method: "POST",
-  body: fd,
-});
+      // ✅ AQUÍ SE CREA EL FORMDATA (esto faltaba)
+      const fd = new FormData();
+      fd.append("question", question);
+      fd.append("message", message);
+      fd.append("name", name);
+      if (file) {
+        fd.append("file", file);
+      }
+
+      const res = await fetch("/api/gifts", {
+        method: "POST",
+        body: fd,
+      });
+
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Error");
+        alert(data.error || "Error al crear link");
         return;
       }
 
-      setShareUrl(data.shareUrl);
-    } catch (e: any) {
-      alert("Error creando link");
+      alert("Link creado correctamente 💖");
+      console.log(data);
+
+    } catch (error) {
+      alert("Error inesperado");
+      console.error(error);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#e678a3",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "serif",
-      color: "white"
-    }}>
-      <div style={{ textAlign: "center" }}>
-        <h1>💌 Crear link</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#e678a8",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        color: "white",
+        fontFamily: "serif",
+      }}
+    >
+      <h1>💌 Crear link</h1>
 
-        <input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          style={{ display: "block", margin: "10px auto", padding: 8 }}
-        />
+      <input
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        placeholder="Pregunta"
+        style={{ margin: 8, padding: 10 }}
+      />
 
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          style={{ display: "block", margin: "10px auto", padding: 8 }}
-        />
+      <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Mensaje"
+        style={{ margin: 8, padding: 10 }}
+      />
 
-        <input
-          placeholder="Tu nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ display: "block", margin: "10px auto", padding: 8 }}
-        />
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Tu nombre"
+        style={{ margin: 8, padding: 10 }}
+      />
 
-        <button
-          onClick={createGift}
-          disabled={loading}
-          style={{
-            marginTop: 10,
-            padding: "10px 20px",
-            background: "#ff4fa3",
-            border: "none",
-            borderRadius: 8,
-            color: "white",
-            cursor: "pointer"
-          }}
-        >
-          {loading ? "Creando..." : "Crear link ✨"}
-        </button>
+      <input
+        type="file"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+        style={{ margin: 8 }}
+      />
 
-        {shareUrl && (
-          <div style={{ marginTop: 20 }}>
-            <p>Tu link:</p>
-            <a href={shareUrl} target="_blank">{shareUrl}</a>
-          </div>
-        )}
-      </div>
+      <button
+        onClick={createGift}
+        disabled={loading}
+        style={{
+          marginTop: 15,
+          padding: 10,
+          background: "#ff4f8b",
+          color: "white",
+          border: "none",
+          borderRadius: 8,
+          cursor: "pointer",
+        }}
+      >
+        {loading ? "Creando..." : "Crear link"}
+      </button>
     </div>
   );
 }
