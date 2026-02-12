@@ -1,12 +1,23 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useSearchParams } from "next/navigation";
 
 export default function CreatedPage() {
   const searchParams = useSearchParams();
   const url = searchParams.get("url");
+
+  if (!url) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}>
+        <h1>No hay link</h1>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -25,24 +36,22 @@ export default function CreatedPage() {
       }}>
         <h1>💖 Link creado 💖</h1>
 
-        {url && (
-          <>
-            <p style={{ marginTop: 20 }}>{url}</p>
-            <button
-              style={{
-                marginTop: 20,
-                padding: "10px 20px",
-                borderRadius: 10,
-                background: "#ff4d88",
-                color: "white",
-                border: "none"
-              }}
-              onClick={() => navigator.clipboard.writeText(url)}
-            >
-              Copiar link
-            </button>
-          </>
-        )}
+        <p style={{ marginTop: 20 }}>{url}</p>
+
+        <button
+          style={{
+            marginTop: 20,
+            padding: "10px 20px",
+            borderRadius: 10,
+            background: "#ff4d88",
+            color: "white",
+            border: "none",
+            cursor: "pointer"
+          }}
+          onClick={() => navigator.clipboard.writeText(url)}
+        >
+          Copiar link
+        </button>
       </div>
     </div>
   );
