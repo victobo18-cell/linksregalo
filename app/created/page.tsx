@@ -1,53 +1,49 @@
-export const dynamic = "force-dynamic";
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import { useSearchParams } from "next/navigation";
 
 export default function CreatedPage() {
   const searchParams = useSearchParams();
-  const link = searchParams.get("link");
+  const url = searchParams.get("url");
 
   return (
-    <>
-      <div className="vbg">
-        <video
-          src="/videos/valentine.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "#f48fb1"
+    }}>
+      <div style={{
+        background: "rgba(0,0,0,0.6)",
+        padding: 30,
+        borderRadius: 20,
+        color: "white",
+        textAlign: "center"
+      }}>
+        <h1>💖 Link creado 💖</h1>
+
+        {url && (
+          <>
+            <p style={{ marginTop: 20 }}>{url}</p>
+            <button
+              style={{
+                marginTop: 20,
+                padding: "10px 20px",
+                borderRadius: 10,
+                background: "#ff4d88",
+                color: "white",
+                border: "none"
+              }}
+              onClick={() => navigator.clipboard.writeText(url)}
+            >
+              Copiar link
+            </button>
+          </>
+        )}
       </div>
-      <div className="vshade" />
-
-      <div className="centerStage">
-        <div className="overlayBox">
-          <h1 className="bigTitle">🎉 Link creado</h1>
-
-          <div className="input" style={{ marginTop: 20 }}>
-            {link}
-          </div>
-
-          <button
-            className="btn btnYes"
-            onClick={() => {
-              navigator.clipboard.writeText(link || "");
-              alert("Link copiado 💖");
-            }}
-          >
-            Copiar link 📋
-          </button>
-
-          <a
-            href={link || "#"}
-            target="_blank"
-            className="btn btnYes"
-            style={{ marginTop: 10 }}
-          >
-            Abrir link 💌
-          </a>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
