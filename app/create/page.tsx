@@ -14,12 +14,10 @@ export default function CreatePage() {
     setShareUrl("");
 
     try {
-      const res = await fetch("/api/gifts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, message, name }),
-      });
-
+     const res = await fetch("/api/gifts", {
+  method: "POST",
+  body: fd,
+});
       const data = await res.json();
 
       if (!res.ok) {
