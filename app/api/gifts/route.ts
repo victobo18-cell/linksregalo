@@ -1,38 +1,32 @@
 import { NextResponse } from "next/server";
-import crypto from "crypto";
-
-export async function GET() {
-  return NextResponse.json({ ok: true });
-}
 
 export async function POST(req: Request) {
   try {
-    const form = await req.formData();
+    const formData = await req.formData();
 
-    const question = form.get("question") as string;
-    const message = form.get("message") as string;
-    const name = form.get("name") as string;
+    const question = formData.get("question");
+    const message = formData.get("message");
+    const name = formData.get("name");
+    const file = formData.get("file");
 
-    console.log("POST recibido");
-    console.log({
+    console.log("Datos recibidos:", {
       question,
       message,
       name,
+      file,
     });
 
-    // Generar token único
-    const token = crypto.randomBytes(8).toString("hex");
-
-    const site =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const token = Math.random().toString(36).substring(2, 10);
 
     return NextResponse.json({
-      shareUrl: `${site}/g/${token}`,
+      ok: true,
+      shareUrl: `/g/${token}`,
     });
-  } catch (err: any) {
-    console.error("ERROR API:", err);
+
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      { error: err?.message || "Error interno" },
+      { error: "Error creating gift" },
       { status: 500 }
     );
   }
