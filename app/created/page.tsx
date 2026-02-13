@@ -1,58 +1,68 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function CreatedPage() {
   const searchParams = useSearchParams();
-  const url = searchParams.get("url");
+  const [link, setLink] = useState("");
 
-  if (!url) {
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      setLink(`${window.location.origin}/g/${token}`);
+    }
+  }, [searchParams]);
+
+  if (!link) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}>
-        <h1>No hay link</h1>
+      <div style={{ padding: 40, textAlign: "center" }}>
+        Cargando...
       </div>
     );
   }
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#f48fb1"
-    }}>
-      <div style={{
-        background: "rgba(0,0,0,0.6)",
-        padding: 30,
-        borderRadius: 20,
-        color: "white",
-        textAlign: "center"
-      }}>
-        <h1>💖 Link creado 💖</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f48fb1",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: "20px",
+      }}
+    >
+      <h1 style={{ color: "white" }}>💖 Tu link está listo</h1>
 
-        <p style={{ marginTop: 20 }}>{url}</p>
+      <input
+        value={link}
+        readOnly
+        style={{
+          padding: "10px",
+          width: "300px",
+          borderRadius: "8px",
+          border: "none",
+        }}
+      />
 
-        <button
-          style={{
-            marginTop: 20,
-            padding: "10px 20px",
-            borderRadius: 10,
-            background: "#ff4d88",
-            color: "white",
-            border: "none",
-            cursor: "pointer"
-          }}
-          onClick={() => navigator.clipboard.writeText(url)}
-        >
-          Copiar link
-        </button>
-      </div>
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(link);
+          alert("Link copiado 💕");
+        }}
+        style={{
+          padding: "10px 20px",
+          borderRadius: "8px",
+          background: "#ff4081",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Copiar link
+      </button>
     </div>
   );
 }
